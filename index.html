@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EVO - Modellini 3D Immersivi</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div id="app">
+      <div id="canvas-container"></div>
+      
+      <div class="ui-overlay">
+        <header class="header">
+          <div class="logo">EVO.MODELS</div>
+          <div class="glass-card">
+            <span>Prezzo: <strong id="price">€249.00</strong></span>
+          </div>
+        </header>
+
+        <main class="controls">
+          <div class="glass-card control-section">
+            <h3>Carrozzeria</h3>
+            <div class="color-options">
+              <div class="color-dot active" style="background: #ff0000;" data-color="#ff0000"></div>
+              <div class="color-dot" style="background: #1a1a1a;" data-color="#1a1a1a"></div>
+              <div class="color-dot" style="background: #0047ab;" data-color="#0047ab"></div>
+              <div class="color-dot" style="background: #e5e4e2;" data-color="#e5e4e2"></div>
+            </div>
+          </div>
+
+          <div class="glass-card control-section">
+            <h3>Cerchioni</h3>
+            <div class="wheels-options">
+              <button class="wheel-btn active" data-wheel="sport">Sport v1</button>
+              <button class="wheel-btn" data-wheel="luxury">Luxury v2</button>
+            </div>
+          </div>
+
+          <div class="glass-card control-section">
+            <h3>Interazione</h3>
+            <div class="actions">
+              <button id="btn-door" class="btn btn-secondary">Apri Portiera</button>
+              <button id="btn-order" class="btn btn-primary">Ordina Ora</button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
