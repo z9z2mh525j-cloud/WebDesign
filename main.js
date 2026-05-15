@@ -26,15 +26,17 @@ class MiniApp {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.2;
     this.container.appendChild(this.renderer.domElement);
 
-    this.camera.position.set(4, 2, 6);
+    this.camera.position.set(5, 3, 7);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.maxPolarAngle = Math.PI / 2.05;
 
-    this.scene.background = new THREE.Color(0x1a1a1a);
-    this.scene.fog = new THREE.Fog(0x1a1a1a, 5, 25);
+    this.scene.background = new THREE.Color(0x111111);
+    this.scene.fog = new THREE.Fog(0x111111, 8, 30);
 
     this.createGarage();
     this.loadCar();
@@ -46,43 +48,53 @@ class MiniApp {
   }
 
   createGarage() {
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.9 });
-    const woodMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.7 });
+    const floorMat = new THREE.MeshStandardMaterial({ 
+        color: 0x222222, 
+        roughness: 0.15, 
+        metalness: 0.6 
+    });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.8 });
 
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMat);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     this.scene.add(floor);
 
-    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), woodMat);
-    backWall.position.set(0, 3, -5);
-    this.scene.add(backWall);
-
-    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(15, 6), wallMat);
-    leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-6, 3, 0);
-    this.scene.add(leftWall);
-
-    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(12, 15), wallMat);
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.set(0, 6, 0);
-    this.scene.add(ceiling);
+    // Garage wall
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), woodMat);
+    wall.position.set(0, 5, -8);
+    this.scene.add(wall);
   }
 
   setupLights() {
-    const ambientLight = new THREE.AmbientLight(0xffe0b2, 0.4);
+    // Soft Ambient Warmth
+    const ambientLight = new THREE.AmbientLight(0xffe0b2, 0.8);
     this.scene.add(ambientLight);
 
-    const bulb = new THREE.PointLight(0xffcc80, 2, 20);
-    bulb.position.set(0, 4, 2);
-    bulb.castShadow = true;
-    this.scene.add(bulb);
-
-    const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    keyLight.position.set(5, 5, 5);
+    // Key Light (Main source)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3);
+    keyLight.position.set(5, 10, 5);
     keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 2048;
+    keyLight.shadow.mapSize.height = 2048;
     this.scene.add(keyLight);
+
+    // Fill Light (Soften shadows)
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    fillLight.position.set(-5, 5, 2);
+    this.scene.add(fillLight);
+
+    // Rim Light (Edge definition)
+    const rimLight = new THREE.PointLight(0xffffff, 4, 20);
+    rimLight.position.set(0, 5, -8);
+    this.scene.add(rimLight);
+
+    // Extra light for the car front
+    const frontLight = new THREE.SpotLight(0xffffff, 2);
+    frontLight.position.set(0, 5, 10);
+    frontLight.target.position.set(0, 0, 0);
+    this.scene.add(frontLight);
+    this.scene.add(frontLight.target);
   }
 
   loadCar() {
@@ -90,13 +102,10 @@ class MiniApp {
     loader.load('/car.glb', (gltf) => {
       this.carModel = gltf.scene;
       
-      // Auto-scaling and centering
       const box = new THREE.Box3().setFromObject(this.carModel);
       const size = box.getSize(new THREE.Vector3());
-      const scale = 3 / size.x; // Target 3 units length
+      const scale = 3.5 / size.x; 
       this.carModel.scale.set(scale, scale, scale);
-      
-      // Reset position to floor
       this.carModel.position.y = -box.min.y * scale;
       
       this.carModel.traverse((node) => {
@@ -104,11 +113,9 @@ class MiniApp {
           node.castShadow = true;
           node.receiveShadow = true;
           
-          // Identify parts by name (heuristics)
           const name = node.name.toLowerCase();
           if (name.includes('body') || name.includes('carrozzeria') || name.includes('shell')) {
             this.bodyParts.push(node);
-            // Set initial British Racing Green if no color is set
             node.material.color.set(0x004225);
           }
           if (name.includes('door') || name.includes('porta')) {
@@ -121,7 +128,6 @@ class MiniApp {
         }
       });
 
-      // If no body parts were found by name, assume all non-wheel meshes are body
       if (this.bodyParts.length === 0) {
         this.carModel.traverse(node => {
           if (node.isMesh && !node.name.toLowerCase().includes('wheel') && !node.name.toLowerCase().includes('tire')) {
@@ -132,9 +138,6 @@ class MiniApp {
       }
 
       this.scene.add(this.carModel);
-      console.log("Modello caricato:", this.carModel);
-    }, undefined, (error) => {
-      console.error("Errore nel caricamento del modello:", error);
     });
   }
 
@@ -159,10 +162,7 @@ class MiniApp {
     document.querySelectorAll('[data-roof]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const type = e.target.dataset.roof;
-        if (!this.roof && this.bodyParts.length > 0) {
-            // Fallback: use the first body part if roof not found
-            this.roof = this.bodyParts[0]; 
-        }
+        if (!this.roof && this.bodyParts.length > 0) this.roof = this.bodyParts[0]; 
         if (this.roof) {
             const targetColor = type === 'white' ? new THREE.Color(0xffffff) : this.bodyParts[0].material.color;
             gsap.to(this.roof.material.color, {
@@ -185,27 +185,20 @@ class MiniApp {
 
   toggleDoor() {
     if (this.doors.length === 0) {
-        alert("Nessuna portiera interattiva trovata nel modello 3D.");
+        alert("Nessuna portiera interattiva trovata nel modello.");
         return;
     }
-    
     this.isDoorOpen = !this.isDoorOpen;
     const targetRotation = this.isDoorOpen ? -Math.PI / 3 : 0;
-    
     this.doors.forEach(door => {
-        gsap.to(door.rotation, {
-            y: targetRotation,
-            duration: 1,
-            ease: "power2.inOut"
-        });
+        gsap.to(door.rotation, { y: targetRotation, duration: 1, ease: "power2.inOut" });
     });
-    
     document.getElementById('btn-door').textContent = this.isDoorOpen ? 'Chiudi Portiera' : 'Apri Portiera';
   }
 
   addToCart() {
     const item = {
-      name: "Il Tuo Modello Personalizzato",
+      name: "Il Tuo Modello Custom",
       color: this.bodyParts.length > 0 ? "#" + this.bodyParts[0].material.color.getHexString() : "Default",
       price: 24500
     };
