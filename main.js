@@ -23,17 +23,19 @@ class MiniApp {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.container.appendChild(this.renderer.domElement);
 
-    this.camera.position.set(5, 3, 5);
+    this.camera.position.set(4, 2, 6);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
-    this.controls.maxPolarAngle = Math.PI / 2.1;
+    this.controls.maxPolarAngle = Math.PI / 2.05;
+    this.controls.minDistance = 3;
+    this.controls.maxDistance = 10;
 
-    // Garage Environment
-    this.scene.background = new THREE.Color(0x111111);
-    this.scene.fog = new THREE.Fog(0x111111, 2, 30);
+    this.scene.background = new THREE.Color(0x1a1a1a);
+    this.scene.fog = new THREE.Fog(0x1a1a1a, 5, 25);
 
     this.createGarage();
     this.createMini();
@@ -45,61 +47,85 @@ class MiniApp {
   }
 
   createGarage() {
+    // Materials
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.9 });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.7 });
+
     // Floor
-    const floorGeo = new THREE.PlaneGeometry(100, 100);
-    const floorMat = new THREE.MeshStandardMaterial({ 
-      color: 0x222222, 
-      roughness: 0.2, 
-      metalness: 0.1 
-    });
-    const floor = new THREE.Mesh(floorGeo, floorMat);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     this.scene.add(floor);
 
-    // Walls (Dark and simple)
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x050505 });
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 20), wallMat);
-    wall.position.z = -10;
-    wall.position.y = 10;
-    this.scene.add(wall);
+    // Back Wall (Wooden Garage Door)
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), woodMat);
+    backWall.position.set(0, 3, -5);
+    this.scene.add(backWall);
+
+    // Decorative panels for garage door
+    for(let i = 0; i < 3; i++) {
+        const panel = new THREE.Mesh(new THREE.PlaneGeometry(11, 0.1), new THREE.MeshStandardMaterial({color: 0x3e2723}));
+        panel.position.set(0, 1.5 + (i * 1.5), -4.95);
+        this.scene.add(panel);
+    }
+
+    // Side Walls
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(15, 6), wallMat);
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-6, 3, 0);
+    this.scene.add(leftWall);
+
+    // Ceiling
+    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(12, 15), wallMat);
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.set(0, 6, 0);
+    this.scene.add(ceiling);
+
+    // Shelves (Geometric)
+    for(let i = 0; i < 3; i++) {
+        const shelf = new THREE.Mesh(new THREE.BoxGeometry(3, 0.1, 0.5), woodMat);
+        shelf.position.set(-5.7, 1 + i*1.2, -3);
+        this.scene.add(shelf);
+    }
   }
 
   setupLights() {
-    // General Ambient Light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Warm Ambient Light
+    const ambientLight = new THREE.AmbientLight(0xffe0b2, 0.3);
     this.scene.add(ambientLight);
 
-    // Main Studio Light
-    const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    mainLight.position.set(5, 10, 5);
-    mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 2048;
-    mainLight.shadow.mapSize.height = 2048;
-    this.scene.add(mainLight);
+    // Main Overhead Bulb (Warm)
+    const bulb = new THREE.PointLight(0xffcc80, 2, 15);
+    bulb.position.set(0, 4, 0);
+    bulb.castShadow = true;
+    bulb.shadow.mapSize.width = 1024;
+    bulb.shadow.mapSize.height = 1024;
+    this.scene.add(bulb);
 
-    // Rim Light (Back)
-    const rimLight = new THREE.PointLight(0x00ff00, 1);
-    rimLight.position.set(-5, 5, -5);
-    this.scene.add(rimLight);
+    // Neon/LED strip effect (Cold contrast)
+    const neon = new THREE.RectAreaLight(0x3a86ff, 1, 4, 0.1);
+    neon.position.set(-5.9, 4, 0);
+    neon.rotation.y = Math.PI / 2;
+    this.scene.add(neon);
 
-    // Top Soft Light
-    const topLight = new THREE.PointLight(0xffffff, 1);
-    topLight.position.set(0, 5, 0);
-    this.scene.add(topLight);
+    // Practical bulb mesh
+    const bulbGeo = new THREE.SphereGeometry(0.1, 16, 16);
+    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffcc80 });
+    const bulbMesh = new THREE.Mesh(bulbGeo, bulbMat);
+    bulbMesh.position.copy(bulb.position);
+    this.scene.add(bulbMesh);
   }
 
   createMini() {
-    const brg = 0x004225; // British Racing Green
+    const brg = 0x004225; 
     const white = 0xffffff;
     
-    // Clear previous if any
     this.car.clear();
     this.bodyParts = [];
 
-    // Body Mat
-    const bodyMat = new THREE.MeshStandardMaterial({ color: brg, metalness: 0.6, roughness: 0.3 });
-    const roofMat = new THREE.MeshStandardMaterial({ color: white, metalness: 0.4, roughness: 0.4 });
+    const bodyMat = new THREE.MeshStandardMaterial({ color: brg, metalness: 0.7, roughness: 0.2 });
+    const roofMat = new THREE.MeshStandardMaterial({ color: white, metalness: 0.5, roughness: 0.3 });
     const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0.1 });
 
     // Lower Body
@@ -112,17 +138,25 @@ class MiniApp {
     // Cabin
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.6, 1.2), bodyMat);
     cabin.position.set(-0.2, 1.1, 0);
+    cabin.castShadow = true;
     this.car.add(cabin);
     this.bodyParts.push(cabin);
 
     // Roof
     this.roof = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 1.3), roofMat);
     this.roof.position.set(-0.2, 1.4, 0);
+    this.roof.castShadow = true;
     this.car.add(this.roof);
 
-    // Headlights
+    // Headlights (Now with emmisive glow)
     const eyeGeo = new THREE.SphereGeometry(0.15, 16, 16);
-    const leftEye = new THREE.Mesh(eyeGeo, chromeMat);
+    const eyeMat = new THREE.MeshStandardMaterial({ 
+        color: 0xffffff, 
+        emissive: 0xffffaa, 
+        emissiveIntensity: 0.5,
+        metalness: 1 
+    });
+    const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
     leftEye.position.set(1.1, 0.7, 0.45);
     this.car.add(leftEye);
 
@@ -140,6 +174,7 @@ class MiniApp {
     doorGroup.position.set(-0.1, 0.5, 0.7); 
     const doorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.6, 0.05), bodyMat);
     doorMesh.position.set(-0.35, 0, 0);
+    doorMesh.castShadow = true;
     doorGroup.add(doorMesh);
     this.door = doorGroup;
     this.car.add(doorGroup);
@@ -148,11 +183,12 @@ class MiniApp {
     // Wheels
     const createWheel = (x, z) => {
       const wheel = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.3, 0.3, 0.2, 32),
-        new THREE.MeshStandardMaterial({ color: 0x111111 })
+        new THREE.CylinderGeometry(0.28, 0.28, 0.2, 32),
+        new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 })
       );
       wheel.rotation.x = Math.PI / 2;
-      wheel.position.set(x, 0.3, z);
+      wheel.position.set(x, 0.28, z);
+      wheel.castShadow = true;
       this.car.add(wheel);
     };
 
