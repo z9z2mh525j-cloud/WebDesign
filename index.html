@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EVO - Modellini 3D Immersivi</title>
+    <title>Vintage Mini - 3D Experience</title>
     <link rel="stylesheet" href="./style.css">
   </head>
   <body>
@@ -13,9 +13,9 @@
       
       <div class="ui-overlay">
         <header class="header">
-          <div class="logo">EVO.MODELS</div>
-          <div class="glass-card">
-            <span>Prezzo: <strong id="price">€249.00</strong></span>
+          <div class="logo">VINTAGE.MINI</div>
+          <div class="glass-card" id="cart-trigger" style="cursor: pointer;">
+            <span>Carrello (<strong id="cart-count">0</strong>)</span>
           </div>
         </header>
 
@@ -23,18 +23,18 @@
           <div class="glass-card control-section">
             <h3>Carrozzeria</h3>
             <div class="color-options">
-              <div class="color-dot active" style="background: #ff0000;" data-color="#ff0000"></div>
+              <div class="color-dot active" style="background: #004225;" data-color="#004225"></div>
+              <div class="color-dot" style="background: #ffffff;" data-color="#ffffff"></div>
               <div class="color-dot" style="background: #1a1a1a;" data-color="#1a1a1a"></div>
-              <div class="color-dot" style="background: #0047ab;" data-color="#0047ab"></div>
-              <div class="color-dot" style="background: #e5e4e2;" data-color="#e5e4e2"></div>
+              <div class="color-dot" style="background: #8b0000;" data-color="#8b0000"></div>
             </div>
           </div>
 
           <div class="glass-card control-section">
-            <h3>Cerchioni</h3>
+            <h3>Tetto (Classic)</h3>
             <div class="wheels-options">
-              <button class="wheel-btn active" data-wheel="sport">Sport v1</button>
-              <button class="wheel-btn" data-wheel="luxury">Luxury v2</button>
+              <button class="wheel-btn active" data-roof="white">Bianco</button>
+              <button class="wheel-btn" data-roof="body">In Tinta</button>
             </div>
           </div>
 
@@ -42,10 +42,28 @@
             <h3>Interazione</h3>
             <div class="actions">
               <button id="btn-door" class="btn btn-secondary">Apri Portiera</button>
-              <button id="btn-order" class="btn btn-primary">Ordina Ora</button>
+              <button id="btn-add-cart" class="btn btn-primary">Aggiungi al Carrello</button>
             </div>
           </div>
         </main>
+      </div>
+
+      <!-- Cart Side Panel -->
+      <div id="cart-panel" class="cart-overlay">
+        <div class="cart-header">
+          <h2>Il Tuo Garage</h2>
+          <button class="close-cart" id="cart-close">×</button>
+        </div>
+        <div id="cart-content" class="cart-items">
+          <!-- Items will be injected here -->
+        </div>
+        <div class="cart-footer" style="margin-top: 2rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <span>Totale:</span>
+            <strong id="cart-total">€0.00</strong>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;">Checkout</button>
+        </div>
       </div>
     </div>
     <script type="module" src="/main.js"></script>
