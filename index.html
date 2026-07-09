@@ -2,68 +2,27 @@
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vintage Mini - 3D Experience</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>MARIO KART SHOP - Official Configurator</title>
+    <!-- Google Fonts for EXACT typography matching the screenshots -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Model Viewer for 3D Mascot -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+      #root {
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <div id="canvas-container"></div>
-      
-      <div class="ui-overlay">
-        <header class="header">
-          <div class="logo">VINTAGE.MINI</div>
-          <div class="glass-card" id="cart-trigger" style="cursor: pointer;">
-            <span>Carrello (<strong id="cart-count">0</strong>)</span>
-          </div>
-        </header>
-
-        <main class="controls" id="ui-controls">
-          <div class="glass-card control-section">
-            <h3>Carrozzeria</h3>
-            <div class="color-options">
-              <div class="color-dot active" style="background: #004225;" data-color="#004225"></div>
-              <div class="color-dot" style="background: #ffffff;" data-color="#ffffff"></div>
-              <div class="color-dot" style="background: #1a1a1a;" data-color="#1a1a1a"></div>
-              <div class="color-dot" style="background: #8b0000;" data-color="#8b0000"></div>
-            </div>
-          </div>
-
-          <div class="glass-card control-section">
-            <h3>Tetto (Classic)</h3>
-            <div class="wheels-options">
-              <button class="wheel-btn active" data-roof="white">Bianco</button>
-              <button class="wheel-btn" data-roof="body">In Tinta</button>
-            </div>
-          </div>
-
-          <div class="glass-card control-section">
-            <h3>Interazione</h3>
-            <div class="actions" style="flex-wrap: wrap;">
-              <button id="btn-door" class="btn btn-secondary">Apri Portiera</button>
-              <a href="/track.html" target="_blank" id="btn-drive" class="btn btn-secondary" style="border-color: #ffaa00; color: #ffaa00; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Test Drive (Pista)</a>
-              <button id="btn-add-cart" class="btn btn-primary" style="margin-top: 1rem;">Aggiungi al Carrello</button>
-            </div>
-          </div>
-        </main>
-      </div>
-
-      <div id="cart-panel" class="cart-overlay">
-        <div class="cart-header">
-          <h2>Il Tuo Garage</h2>
-          <button class="close-cart" id="cart-close">×</button>
-        </div>
-        <div id="cart-content" class="cart-items"></div>
-        <div class="cart-footer" style="margin-top: 2rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-            <span>Totale:</span>
-            <strong id="cart-total">€0.00</strong>
-          </div>
-          <button class="btn btn-primary" style="width: 100%;">Checkout</button>
-        </div>
-      </div>
-    </div>
-    <script type="module" src="/main.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

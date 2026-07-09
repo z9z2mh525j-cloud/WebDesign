@@ -1,5 +1,40 @@
+# dependencies / build output
 node_modules
 dist
 .DS_Store
 *.local
 backups
+
+# design & video working files (not needed by the running site or Figma)
+Adobe Premiere Pro Auto-Save/
+*.blend
+*.blend1
+*.blend.bak
+*.bak
+*.prproj
+*.prin
+*.fig
+mariokartsito_extracted/
+
+# heavy / working 3D + media files kept at repo root
+# (the site loads all its assets from /public, so root copies are not needed)
+/*.glb
+/pista arcobaleno.glb
+/H2x1_NSwitch_MarioKart8Deluxe_image1600w.jpg
+/menu-bg.jpg
+/toad.png
+/puntatore.png
+/Nintendologo.png
+/audio.mp3
+/toadciao.mp4
+/mariokart_images/
+
+# unused / duplicate assets inside public
+public/pistanuova
+public/pistanuova 2.glb
+public/kart_blu.glb
+public/kart_rosso.glb
+public/kart_viola.glb
+public/pista.glb
+public/mariokartfinale.glb
+public/rainbow_road_u.glb
