@@ -262,24 +262,17 @@ export function TestDrive({ kartColor, kartUrl = '/mariokartcar.glb', onExit, on
         let asphaltX = 0;
         let asphaltZ = 0;
         let spawnReady = false;
-
-        // 0) A custom start point the player saved by pressing "P" while
-        // driving. If present, the kart always starts from exactly there.
-        // The saved position is already a final kart position (post-grounding),
-        // so it is used directly without the centering/grounding offset.
         let spawnFromSaved = false;
-        try {
-          const raw = localStorage.getItem('td_spawn_v1');
-          if (raw) {
-            const s = JSON.parse(raw);
-            if (typeof s.x === 'number' && typeof s.y === 'number' && typeof s.z === 'number') {
-              spawnPoint.set(s.x, s.y, s.z);
-              spawnYaw = typeof s.yaw === 'number' ? s.yaw : 0;
-              spawnReady = true;
-              spawnFromSaved = true;
-            }
-          }
-        } catch { /* ignore */ }
+
+        // FIXED START: always spawn on the start/finish line, on the straight
+        // under the "MARIO KART" banner, facing the banner. This takes priority
+        // over everything (including any old "P" point saved in the browser), so
+        // the kart is guaranteed to start here. These are final (post-grounding)
+        // kart coordinates, used directly without the grounding offset.
+        spawnPoint.set(-92.4, 0.3, -8.7);
+        spawnYaw = -3.13; // muso rivolto verso il traguardo/striscione
+        spawnReady = true;
+        spawnFromSaved = true;
 
         // 1) Preferred: spawn ON the start/finish line, under the gantry. The
         // painted line is a hole in the road mesh, so we read the road height
@@ -302,8 +295,10 @@ export function TestDrive({ kartColor, kartUrl = '/mariokartcar.glb', onExit, on
               if (hitY !== null) {
                 groundY = hitY;
                 asphaltX = cx; asphaltZ = cz;
-                // Place the kart on the line (gantry center), at road height.
-                spawnX = gCenter.x; spawnZ = gCenter.z;
+                // Place the kart on the actual asphalt hit nearest the gantry
+                // (the gantry centre can fall on the dirt/hole, which would put
+                // the car off-road), so it always starts sitting on the road.
+                spawnX = cx; spawnZ = cz;
                 break outer;
               }
             }
@@ -556,6 +551,11 @@ export function TestDrive({ kartColor, kartUrl = '/mariokartcar.glb', onExit, on
         try {
           localStorage.setItem('td_spawn_v1', JSON.stringify({ x: p.x, y: p.y, z: p.z, yaw }));
         } catch { /* ignore */ }
+        const savedEl = document.getElementById('testdrive-saved');
+        if (savedEl) {
+          savedEl.innerHTML = '📍 Partenza salvata!<br/>' +
+            `x ${p.x.toFixed(1)}  y ${p.y.toFixed(1)}  z ${p.z.toFixed(1)}  yaw ${yaw.toFixed(2)}`;
+        }
         flashBanner('testdrive-saved');
       }
       // T = set the FINISH line (where the lap is completed).

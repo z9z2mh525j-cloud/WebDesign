@@ -102,8 +102,9 @@
 
 /* Centered visualizer zone */
 .center-product-zone {
-  /* grow to fill tall screens, but never shrink below content on short ones */
-  flex: 1 0 auto;
+  /* Don't stretch to fill the whole screen: keep the kart + controls grouped
+     near the top so the bottom buttons sit higher up. */
+  flex: 0 0 auto;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -111,6 +112,7 @@
   gap: 3.5rem;
   position: relative;
   width: 100%;
+  margin-top: 1rem;
 }
 
 .kart-viewer-box {

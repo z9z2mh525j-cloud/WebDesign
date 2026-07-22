@@ -1,0 +1,134 @@
+/* ============================================================
+   PIXEL / 8-BIT NINTENDO STYLE — global override layer.
+   Imported LAST so it wins the cascade over configurator.css.
+   - Press Start 2P: titles, buttons, UI chrome (small sizes)
+   - VT323: body / readable text (larger sizes)
+   ============================================================ */
+
+:root {
+  --pixel-title: 'Press Start 2P', 'Outfit', system-ui, sans-serif;
+  --pixel-body: 'VT323', 'Montserrat', monospace;
+  /* hard, no-blur pixel shadow */
+  --pixel-shadow: 4px 4px 0 #1a1a1a;
+  --pixel-shadow-sm: 3px 3px 0 #1a1a1a;
+}
+
+/* Crisp, non-blurred rendering for all imagery/canvas (3D karts, thumbs) */
+img, canvas, video {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Base typography: readable pixel font for everything… */
+body, .size-full, p, span, div, li, td, th, label, input, textarea, select {
+  font-family: var(--pixel-body);
+  letter-spacing: 0.02em;
+}
+
+/* Bump VT323 up (it renders small) so body copy stays legible */
+body { font-size: 20px; }
+
+/* …and the chunky 8-bit font for headings, buttons and key labels */
+h1, h2, h3, h4, h5, h6,
+button, .btn, [class*="btn-"],
+.card-title, .cart-title, .pp-card h2, .pp-card h3 {
+  font-family: var(--pixel-title) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+/* Press Start 2P is huge per glyph — scale headings down to fit */
+h1 { font-size: clamp(1.1rem, 4vw, 2rem) !important; }
+h2 { font-size: clamp(0.9rem, 3vw, 1.4rem) !important; }
+h3 { font-size: clamp(0.7rem, 2.4vw, 1.05rem) !important; }
+h4, h5, h6 { font-size: clamp(0.6rem, 2vw, 0.85rem) !important; }
+
+/* ---- Squared, blocky everything (kill rounded corners) ---- */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* Hard pixel borders + stepped shadows on the main surfaces */
+button, .btn, [class*="btn-"],
+.card, .kart-card, .color-swatch, .cart-slideout,
+.pp-card, .modal-box, input, textarea, select,
+.td-progress, .badge, [class*="panel"] {
+  border: 3px solid #1a1a1a !important;
+  box-shadow: var(--pixel-shadow) !important;
+}
+
+/* Buttons: compact, tidy little arcade buttons (not huge). Press Start 2P is
+   big per glyph, so keep the font small and the padding tight. */
+button, .btn, [class*="btn-"] {
+  position: relative;
+  font-size: 0.6rem !important;      /* small pixel type = compact buttons */
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  padding: 0.55em 0.95em;
+  border-width: 2px !important;      /* thinner border looks cleaner */
+  border-radius: 5px !important;     /* soft corners = "carino", still retro */
+  box-shadow: var(--pixel-shadow-sm) !important;
+  background-image: linear-gradient(rgba(255,255,255,0.22), rgba(0,0,0,0.06));
+  transition: transform 0.05s ease, box-shadow 0.05s ease, filter 0.12s ease;
+  cursor: pointer;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.18);
+}
+button:hover, .btn:hover, [class*="btn-"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 4px 4px 0 #1a1a1a !important;
+  filter: brightness(1.05);
+}
+button:active, .btn:active, [class*="btn-"]:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0 #1a1a1a !important;
+}
+
+/* Swatches stay square blocks (were circles) */
+.color-swatch, [class*="swatch"] {
+  border-radius: 0 !important;
+}
+
+/* Progress bar reads as segmented pixel meter */
+.td-progress, #td-progress-fill, [class*="progress"] {
+  border-radius: 0 !important;
+  background-image: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent 6px,
+    rgba(0,0,0,0.18) 6px,
+    rgba(0,0,0,0.18) 8px
+  );
+}
+
+/* Mute button (inline-styled circle in App.tsx) -> square pixel button */
+button[aria-label*="musica"] {
+  border-radius: 0 !important;
+  box-shadow: var(--pixel-shadow-sm) !important;
+  font-family: var(--pixel-title) !important;
+}
+
+/* Subtle CRT scanline overlay across the whole app */
+#root::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.05) 0,
+    rgba(0,0,0,0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Turn off smooth font anti-alias vibe -> crisper edges */
+* {
+  -webkit-font-smoothing: none;
+  text-rendering: optimizeSpeed;
+}

@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { SplashScreen } from "./components/splash-screen";
-import { IntroVideo } from "./components/intro-video";
 import { Configurator } from "./components/configurator";
 import { TestDrive } from "./components/test-drive";
 
 export default function App() {
-  const [screen, setScreen] = useState<'splash' | 'video' | 'configurator' | 'testdrive'>('splash');
+  const [screen, setScreen] = useState<'splash' | 'configurator' | 'testdrive'>('splash');
   const [kartColor, setKartColor] = useState('#E52521');
   const [kartUrl, setKartUrl] = useState('/mariokartcar.glb');
   const [autoAddToCart, setAutoAddToCart] = useState(false);
@@ -101,10 +100,7 @@ export default function App() {
       </button>
 
       {screen === 'splash' && (
-        <SplashScreen onEnter={() => setScreen('video')} />
-      )}
-      {screen === 'video' && (
-        <IntroVideo onContinue={() => setScreen('configurator')} />
+        <SplashScreen onEnter={() => setScreen('configurator')} />
       )}
       {screen === 'configurator' && (
         <Configurator

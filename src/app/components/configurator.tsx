@@ -314,7 +314,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
             // dimension, so all karts look the same size regardless of tall
             // parts (e.g. exhaust pipes).
             const footprint = Math.hypot(size.x, size.z) || 1;
-            const scale = 4.62 / footprint;
+            const scale = 5.544 / footprint; // +20% rispetto a 4.62
             loadedModel.scale.setScalar(scale);
 
             const box2 = new THREE.Box3().setFromObject(loadedModel);
@@ -1097,9 +1097,6 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           </button>
         </div>
 
-        <button id="btn-open-customizer" className="text-config-trigger">
-          configura il tuo kart
-        </button>
 
         {/* KART MODEL THUMBNAILS */}
         <div className="kart-thumbs" style={{ display: 'flex', gap: '12px', justifyContent: 'center', margin: '4px 0 10px' }}>
@@ -1425,17 +1422,10 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
               <span></span><span></span><span></span><span></span><span></span>
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
-            <div className="win-badge">
-              <span className="win-flag win-flag-l">🏁</span>
-              <span className="win-trophy">🏆</span>
-              <span className="win-flag win-flag-r">🏁</span>
-            </div>
-            <h2>1° POSTO!</h2>
-            <p className="win-sub">Acquisto completato — i tuoi kart sono pronti a sfrecciare! 🏎️💨</p>
+            <h2>ACQUISTO COMPLETATO</h2>
 
             <div className="receipt-receipt-box">
               <div className="receipt-header">
-                <h3>REGNO DEI FUNGHI GP</h3>
                 <p>Ricevuta Ufficiale Ordine</p>
                 <p id="receipt-date">Data: 29/05/2026</p>
               </div>
