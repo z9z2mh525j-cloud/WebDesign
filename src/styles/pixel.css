@@ -69,7 +69,7 @@ button, .btn, [class*="btn-"] {
   line-height: 1.4;
   padding: 0.55em 0.95em;
   border-width: 2px !important;      /* thinner border looks cleaner */
-  border-radius: 5px !important;     /* soft corners = "carino", still retro */
+  border-radius: 8px !important;     /* leggermente arrotondati */
   box-shadow: var(--pixel-shadow-sm) !important;
   background-image: linear-gradient(rgba(255,255,255,0.22), rgba(0,0,0,0.06));
   transition: transform 0.05s ease, box-shadow 0.05s ease, filter 0.12s ease;
@@ -86,9 +86,9 @@ button:active, .btn:active, [class*="btn-"]:active {
   box-shadow: 1px 1px 0 #1a1a1a !important;
 }
 
-/* Swatches stay square blocks (were circles) */
+/* Swatches: slightly rounded like the buttons */
 .color-swatch, [class*="swatch"] {
-  border-radius: 0 !important;
+  border-radius: 8px !important;
 }
 
 /* Progress bar reads as segmented pixel meter */

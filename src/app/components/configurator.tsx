@@ -525,7 +525,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
       gsap.to('#bar-handle', { width: `${(finalHandle / 5) * 100}%`, duration: 0.4, ease: 'power2.out' });
       gsap.to('#bar-traction', { width: `${(finalTraction / 5) * 100}%`, duration: 0.4, ease: 'power2.out' });
 
-      let price = 800;
+      let price = 30;
       if (tireCard && tireCard.dataset.partId !== 'standard') {
         price += tireCard.dataset.partId === 'slick' ? 150 : 200;
       }
@@ -544,7 +544,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
       if (discountBadge) {
         if (pct > 0) {
           discountBadge.style.display = 'block';
-          discountBadge.textContent = `🎁 Sconto Test Drive: -${pct}%  (${price} → ${finalPrice} 🪙)`;
+          discountBadge.textContent = `🎁 Sconto Test Drive: -${pct}%  (${price} → ${finalPrice}€)`;
         } else {
           discountBadge.style.display = 'none';
         }
@@ -576,6 +576,25 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
       });
 
       // Kart model selector thumbnails (Standard / Egg Standard).
+      // Stats (out of 5) shown in the left panel for each selectable kart.
+      const KART_STATS: Record<string, { speed: number; accel: number; weight: number; handle: number }> = {
+        '/mariokartcar.glb': { speed: 3, accel: 3, weight: 3, handle: 3 },
+        '/eggstandard.glb':  { speed: 2, accel: 4, weight: 2, handle: 4 },
+        '/fulmine.glb':      { speed: 5, accel: 4, weight: 2, handle: 3 },
+      };
+      const updateVehicleStats = (url: string) => {
+        const s = KART_STATS[url] || KART_STATS['/mariokartcar.glb'];
+        const set = (id: string, v: number) => {
+          const el = document.getElementById(id);
+          if (el) el.style.width = `${(v / 5) * 100}%`;
+        };
+        set('stat-speed', s.speed);
+        set('stat-accel', s.accel);
+        set('stat-weight', s.weight);
+        set('stat-handle', s.handle);
+      };
+      updateVehicleStats('/mariokartcar.glb'); // initial (Standard is selected)
+
       document.querySelectorAll('.kart-thumb-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const url = (btn as HTMLElement).dataset.kart;
@@ -589,6 +608,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           btn.classList.add('active');
           (btn as HTMLElement).style.background = '#FFD500';
           glbSpinnerRef.current.loadModel(url);
+          updateVehicleStats(url);
         });
       });
 
@@ -701,14 +721,14 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
               </div>
               <div style="text-align:right;white-space:nowrap;">
                 ${item.discountPct > 0 ? `<div style="font-size:0.72rem;color:#1f9d2f;font-weight:900;">🎁 -${item.discountPct}%</div>` : ''}
-                <div style="font-weight:900;color:#d62828;">${item.price} 🪙</div>
+                <div style="font-weight:900;color:#d62828;">${item.price}€</div>
               </div>
             </div>
           `).join('') || '<p style="color:#8a774f;font-family:\'Outfit\',sans-serif;font-weight:700;">Nessun articolo.</p>';
         }
         const total = state.cart.reduce((sum, item) => sum + item.price, 0);
         const totalEl = document.getElementById('purchase-total');
-        if (totalEl) totalEl.textContent = `${total} 🪙`;
+        if (totalEl) totalEl.textContent = `${total}€`;
       }
 
       addItem() {
@@ -722,7 +742,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
         const tireName = tire ? tire.textContent!.split('+')[0].trim() : 'Standard';
         const gliderName = glider ? glider.textContent!.split('+')[0].trim() : 'Super Glider';
         // #config-total-price already holds the discounted price.
-        const price = parseInt(document.getElementById('config-total-price')!.textContent || '800');
+        const price = parseInt(document.getElementById('config-total-price')!.textContent || '30');
         const pct = Math.max(0, Math.min(100, discount));
         const original = pct > 0 ? Math.round(price / (1 - pct / 100)) : price;
 
@@ -762,8 +782,8 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
               <p>Il tuo garage è vuoto. Carica un kart dal configuratore!</p>
             </div>
           `;
-          document.getElementById('cart-subtotal')!.textContent = `0 🪙`;
-          document.getElementById('cart-total')!.textContent = `0 🪙`;
+          document.getElementById('cart-subtotal')!.textContent = `0€`;
+          document.getElementById('cart-total')!.textContent = `0€`;
           document.getElementById('checkout-total-price-lbl')!.textContent = `0`;
           this.checkoutBtn.disabled = true;
           const goBtn0 = document.getElementById('btn-go-purchase') as HTMLButtonElement | null;
@@ -788,15 +808,15 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
               <button class="btn-remove-item" onclick="window.removeCartItem('${item.id}')">Rimuovi</button>
             </div>
             <div class="cart-item-price-block">
-              ${item.discountPct > 0 ? `<span style="display:block;font-size:0.72rem;color:#2ecc40;font-weight:800;">🎁 -${item.discountPct}%</span><span style="display:block;text-decoration:line-through;opacity:0.6;font-size:0.78rem;">${item.originalPrice} 🪙</span>` : ''}
-              <span class="cart-item-price">${item.price} 🪙</span>
+              ${item.discountPct > 0 ? `<span style="display:block;font-size:0.72rem;color:#2ecc40;font-weight:800;">🎁 -${item.discountPct}%</span><span style="display:block;text-decoration:line-through;opacity:0.6;font-size:0.78rem;">${item.originalPrice}€</span>` : ''}
+              <span class="cart-item-price">${item.price}€</span>
             </div>
           </div>
         `).join('');
 
         const total = state.cart.reduce((sum, item) => sum + item.price, 0);
-        document.getElementById('cart-subtotal')!.textContent = `${total} 🪙`;
-        document.getElementById('cart-total')!.textContent = `${total} 🪙`;
+        document.getElementById('cart-subtotal')!.textContent = `${total}€`;
+        document.getElementById('cart-total')!.textContent = `${total}€`;
         document.getElementById('checkout-total-price-lbl')!.textContent = total.toString();
         this.renderPurchaseSummary();
       }
@@ -811,18 +831,19 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
 
         audio.playCoin();
         state.userCoins -= total;
-        document.getElementById('user-coins')!.textContent = state.userCoins.toString();
+        const coinsEl = document.getElementById('user-coins');
+        if (coinsEl) coinsEl.textContent = state.userCoins.toString();
 
         const receiptList = document.getElementById('ordered-items-receipt')!;
         receiptList.innerHTML = state.cart.map(item => `
           <div class="receipt-item">
             <span>${item.emoji} Kart Custom ${item.driver}</span>
-            <strong>${item.price} 🪙</strong>
+            <strong>${item.price}€</strong>
           </div>
         `).join('') + `
           <div class="receipt-item" style="border-top: 1px dashed rgba(255,255,255,0.15); margin-top: 6px; padding-top: 6px; font-weight: 700; font-size: 0.9rem;">
             <span>Totale Pagato (${method}):</span>
-            <strong style="color: #ffaa00;">${total} 🪙</strong>
+            <strong style="color: #ffaa00;">${total}€</strong>
           </div>
         `;
 
@@ -1046,37 +1067,94 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
         </div>
         
         <div className="header-right-group">
-          <button 
-            onClick={onBackToMenu}
-            className="btn-garage-toggle" 
-            style={{ marginRight: '1rem', background: '#333', color: 'white' }}
-          >
-            ← HOME
-          </button>
-
-          <div className="coins-display" title="Monete d'oro">
-            <span>🪙</span>
-            <span id="user-coins">9999</span>
-          </div>
-          
           <button id="btn-open-garage" className="btn-garage-toggle">
-            🛒 GARAGE (<span id="cart-count">0</span>)
+            GARAGE<span id="cart-count" style={{ display: 'none' }}>0</span>
           </button>
-          
-          <div className="header-m-logo">
-            <svg viewBox="0 0 100 80" width="45" height="35" fill="white">
-              <path d="M12 70V10h16l22 36 22-36h16v60H74V32L54 64H46L26 32v38H12z" />
-            </svg>
-          </div>
         </div>
       </header>
 
       {/* CENTER PRODUCT INTERACTIVE ZONE */}
       <div className="center-product-zone">
+        {/* VEHICLE STATS PANEL (left of the kart) */}
+        <div className="vehicle-stats-panel">
+          <h3 className="vsp-title">Prestazioni</h3>
+          <div className="vsp-row">
+            <span className="vsp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3.5 18a8.5 8.5 0 1 1 17 0" />
+                <path d="M12 18l4.5-5.5" />
+                <circle cx="12" cy="18" r="1.3" fill="currentColor" stroke="none" />
+              </svg>
+            </span>
+            <div className="vsp-body">
+              <span className="vsp-label">Velocità</span>
+              <div className="vsp-bar"><div className="vsp-fill" id="stat-speed"></div></div>
+            </div>
+          </div>
+          <div className="vsp-row">
+            <span className="vsp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 5l7 7-7 7" />
+                <path d="M12 5l7 7-7 7" />
+              </svg>
+            </span>
+            <div className="vsp-body">
+              <span className="vsp-label">Accelerazione</span>
+              <div className="vsp-bar"><div className="vsp-fill" id="stat-accel"></div></div>
+            </div>
+          </div>
+          <div className="vsp-row">
+            <span className="vsp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 9v6" /><path d="M7 6.5v11" /><path d="M17 6.5v11" /><path d="M20 9v6" />
+                <path d="M7 12h10" />
+              </svg>
+            </span>
+            <div className="vsp-body">
+              <span className="vsp-label">Peso</span>
+              <div className="vsp-bar"><div className="vsp-fill" id="stat-weight"></div></div>
+            </div>
+          </div>
+          <div className="vsp-row">
+            <span className="vsp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <circle cx="12" cy="12" r="2.3" />
+                <path d="M12 14.3V21" />
+                <path d="M10.1 10.9 4.4 7.7" />
+                <path d="M13.9 10.9 19.6 7.7" />
+              </svg>
+            </span>
+            <div className="vsp-body">
+              <span className="vsp-label">Maneggevolezza</span>
+              <div className="vsp-bar"><div className="vsp-fill" id="stat-handle"></div></div>
+            </div>
+          </div>
+        </div>
+
         <div className="kart-viewer-box" id="kart-spinner-container">
           <div id="glb-loader-spinner" className="glb-loader">
             <span className="spinner-icon">🏎️</span>
             <p>Caricamento modello 3D...</p>
+          </div>
+        </div>
+
+        {/* VEHICLE SELECT PANEL (right of the kart) */}
+        <div className="vehicle-select-panel">
+          <h3 className="vsel-title">Veicoli</h3>
+          <div className="kart-thumbs">
+            <button className="kart-thumb-btn veh-option active" data-kart="/mariokartcar.glb" title="Kart Standard">
+              <img id="kart-thumb-mario" alt="Kart Standard" className="veh-thumb" />
+              <span className="veh-name">Standard</span>
+            </button>
+            <button className="kart-thumb-btn veh-option" data-kart="/eggstandard.glb" title="Kart Egg Standard">
+              <img id="kart-thumb-egg" alt="Kart Egg Standard" className="veh-thumb" />
+              <span className="veh-name">Egg Standard</span>
+            </button>
+            <button className="kart-thumb-btn veh-option" data-kart="/fulmine.glb" title="Kart Fulmine">
+              <img id="kart-thumb-fulmine" alt="Kart Fulmine" className="veh-thumb" />
+              <span className="veh-name">Fulmine</span>
+            </button>
           </div>
         </div>
 
@@ -1097,49 +1175,6 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           </button>
         </div>
 
-
-        {/* KART MODEL THUMBNAILS */}
-        <div className="kart-thumbs" style={{ display: 'flex', gap: '12px', justifyContent: 'center', margin: '4px 0 10px' }}>
-          <button
-            className="kart-thumb-btn active"
-            data-kart="/mariokartcar.glb"
-            title="Kart Standard"
-            style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-              padding: '4px 8px', borderRadius: '12px', cursor: 'pointer',
-              border: '3px solid #1a1a1a', background: '#FFD500', boxShadow: '0 3px 0 #1a1a1a',
-            }}
-          >
-            <img id="kart-thumb-mario" alt="Kart Standard" style={{ width: '52px', height: '40px', objectFit: 'contain', display: 'block' }} />
-            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '0.7rem', color: '#1a1a1a' }}>Standard</span>
-          </button>
-          <button
-            className="kart-thumb-btn"
-            data-kart="/eggstandard.glb"
-            title="Kart Egg Standard"
-            style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-              padding: '4px 8px', borderRadius: '12px', cursor: 'pointer',
-              border: '3px solid #1a1a1a', background: '#ffffff', boxShadow: '0 3px 0 #1a1a1a',
-            }}
-          >
-            <img id="kart-thumb-egg" alt="Kart Egg Standard" style={{ width: '52px', height: '40px', objectFit: 'contain', display: 'block' }} />
-            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '0.7rem', color: '#1a1a1a' }}>Egg Standard</span>
-          </button>
-          <button
-            className="kart-thumb-btn"
-            data-kart="/fulmine.glb"
-            title="Kart Fulmine"
-            style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-              padding: '4px 8px', borderRadius: '12px', cursor: 'pointer',
-              border: '3px solid #1a1a1a', background: '#ffffff', boxShadow: '0 3px 0 #1a1a1a',
-            }}
-          >
-            <img id="kart-thumb-fulmine" alt="Kart Fulmine" style={{ width: '52px', height: '40px', objectFit: 'contain', display: 'block' }} />
-            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: '0.7rem', color: '#1a1a1a' }}>Fulmine</span>
-          </button>
-        </div>
 
         {/* TEST DRIVE DISCOUNT BADGE */}
         <div
@@ -1166,40 +1201,27 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           ></button>
           <button className="inline-swatch" data-hex="#3498DB" data-color-hue="220" style={{ background: '#3498DB' }} title="Blu"></button>
           <button className="inline-swatch" data-hex="#9B59B6" data-color-hue="280" style={{ background: '#9B59B6' }} title="Viola"></button>
-          
-          <button id="btn-inline-add-to-cart" className="inline-add-btn" style={{ marginLeft: '1rem' }}>
-            AGGIUNGI AL CARRELLO 🛒
-          </button>
         </div>
-      </div>
 
-      {/* TEST DRIVE BUTTON */}
-      <button
-        onClick={() => {
-          const color = glbSpinnerRef.current?.currentColor || '#E52521';
-          const kartUrl = glbSpinnerRef.current?.kartUrl || '/mariokartcar.glb';
-          onTestDrive?.(color, kartUrl);
-        }}
-        className="test-drive-btn"
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 20,
-          background: '#FFD500',
-          color: '#1a1a1a',
-          fontFamily: "'Outfit', sans-serif",
-          fontWeight: 800,
-          fontSize: '1rem',
-          border: '3px solid #1a1a1a',
-          borderRadius: '999px',
-          padding: '14px 28px',
-          boxShadow: '0 4px 0 #1a1a1a',
-          cursor: 'pointer',
-        }}
-      >
-        🏁 TEST DRIVE
-      </button>
+        {/* TEST DRIVE — first button */}
+        <button
+          onClick={() => {
+            const color = glbSpinnerRef.current?.currentColor || '#E52521';
+            const kartUrl = glbSpinnerRef.current?.kartUrl || '/mariokartcar.glb';
+            onTestDrive?.(color, kartUrl);
+          }}
+          className="test-drive-cta"
+        >
+          <span className="tdc-icon">🏁</span>
+          <span className="tdc-text">PROVA IL TEST DRIVE</span>
+          <span className="tdc-arrow">›</span>
+        </button>
+
+        {/* ADD TO CART — second button */}
+        <button id="btn-inline-add-to-cart" className="inline-add-btn">
+          AGGIUNGI AL GARAGE
+        </button>
+      </div>
 
       {/* SLIDING OVERLAY DRAWER */}
       <div id="customizer-drawer" className="customizer-drawer">
@@ -1228,13 +1250,13 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
             <h3 className="drawer-section-title">03 / PNEUMATICI</h3>
             <div className="chips-list">
               <button className="chip-btn active" data-part-type="tire" data-part-id="standard" data-mod-speed="0" data-mod-accel="0" data-mod-weight="0" data-mod-handle="0" data-mod-traction="0">
-                <span className="chip-icon">🛞</span> Standard <span className="chip-price">+ 0 🪙</span>
+                <span className="chip-icon">🛞</span> Standard <span className="chip-price">+ 0€</span>
               </button>
               <button className="chip-btn" data-part-type="tire" data-part-id="slick" data-mod-speed="2" data-mod-accel="-1" data-mod-weight="1" data-mod-handle="1" data-mod-traction="-2">
-                <span className="chip-icon">🏎️</span> Slick Racing <span className="chip-price">+ 150 🪙</span>
+                <span className="chip-icon">🏎️</span> Slick Racing <span className="chip-price">+ 150€</span>
               </button>
               <button className="chip-btn" data-part-type="tire" data-part-id="monster" data-mod-speed="-1" data-mod-accel="1" data-mod-weight="2" data-mod-handle="-2" data-mod-traction="3">
-                <span className="chip-icon">🚜</span> Monster Fuoristrada <span className="chip-price">+ 200 🪙</span>
+                <span className="chip-icon">🚜</span> Monster Fuoristrada <span className="chip-price">+ 200€</span>
               </button>
             </div>
           </div>
@@ -1244,13 +1266,13 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
             <h3 className="drawer-section-title">04 / DELTAPLANO</h3>
             <div className="chips-list">
               <button className="chip-btn active" data-part-type="glider" data-part-id="super" data-mod-speed="0" data-mod-accel="0" data-mod-weight="0" data-mod-handle="0" data-mod-traction="0">
-                <span className="chip-icon">🪂</span> Super Glider <span className="chip-price">+ 0 🪙</span>
+                <span className="chip-icon">🪂</span> Super Glider <span className="chip-price">+ 0€</span>
               </button>
               <button className="chip-btn" data-part-type="glider" data-part-id="parasol" data-mod-speed="-1" data-mod-accel="2" data-mod-weight="-1" data-mod-handle="1" data-mod-traction="0">
-                <span className="chip-icon">⛱️</span> Ombrello Peach <span className="chip-price">+ 120 🪙</span>
+                <span className="chip-icon">⛱️</span> Ombrello Peach <span className="chip-price">+ 120€</span>
               </button>
               <button className="chip-btn" data-part-type="glider" data-part-id="cloud" data-mod-speed="-1" data-mod-accel="3" data-mod-weight="-2" data-mod-handle="2" data-mod-traction="-1">
-                <span className="chip-icon">☁️</span> Nuvola Soft <span className="chip-price">+ 180 🪙</span>
+                <span className="chip-icon">☁️</span> Nuvola Soft <span className="chip-price">+ 180€</span>
               </button>
             </div>
           </div>
@@ -1291,7 +1313,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
         <div className="drawer-footer">
           <div className="drawer-price-info">
             <span className="d-price-lbl">TOTALE KART</span>
-            <span className="d-price-val"><span id="config-total-price">800</span> 🪙</span>
+            <span className="d-price-val"><span id="config-total-price">30</span>€</span>
           </div>
           <button id="btn-add-to-cart" className="btn-drawer-add">
             AGGIUNGI AL CARRELLO 🛒
@@ -1317,11 +1339,11 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           <div className="cart-totals">
             <div className="total-row">
               <span>Subtotale:</span>
-              <span id="cart-subtotal">0 🪙</span>
+              <span id="cart-subtotal">0€</span>
             </div>
             <div className="total-row grand-total">
               <span>Totale Ordine:</span>
-              <span id="cart-total">0 🪙</span>
+              <span id="cart-total">0€</span>
             </div>
           </div>
 
@@ -1345,7 +1367,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
             <div id="purchase-items" style={{ margin: '10px 0 4px' }}></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#1a1a1a', fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: '1.2rem', borderTop: '2px dashed #1a1a1a', paddingTop: '12px', marginTop: '8px' }}>
               <span>Totale</span>
-              <span id="purchase-total" style={{ color: '#d62828' }}>0 🪙</span>
+              <span id="purchase-total" style={{ color: '#d62828' }}>0€</span>
             </div>
           </div>
 
@@ -1405,7 +1427,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
               </div>
 
               <button type="submit" id="btn-checkout-trigger" className="btn-checkout-complete">
-                COMPLETA L'ORDINE (🪙 <span id="checkout-total-price-lbl">0</span>)
+                COMPLETA L'ORDINE (€ <span id="checkout-total-price-lbl">0</span>)
               </button>
             </form>
           </div>

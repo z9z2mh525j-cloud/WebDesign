@@ -1,0 +1,238 @@
+/* ============================================================
+   CONFIGURATOR SKIN — polished Mario Kart look (mockup match).
+   Imported AFTER pixel.css so it overrides the 8-bit styling
+   for the configurator screen only.
+   ============================================================ */
+
+/* Smooth (not pixelated) rendering for the kart canvas + thumbnails here */
+#kart-spinner-container canvas,
+.veh-thumb { image-rendering: auto !important; }
+
+/* ---------- Side panels (Prestazioni / Veicoli) ---------- */
+.vehicle-stats-panel,
+.vehicle-select-panel {
+  /* identical size for both side panels */
+  width: 290px !important;
+  max-width: 30vw !important;
+  height: 420px !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(165deg, #c22420 0%, #8d1714 55%, #6f1210 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 18px 34px rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.12) !important;
+  padding: 1.3rem 1.4rem !important;
+  gap: 0.4rem !important;
+  justify-content: flex-start !important;
+}
+
+.vsp-title,
+.vsel-title {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+  font-style: italic;
+  font-size: 1.5rem !important;
+  letter-spacing: 0.02em;
+  color: #fff !important;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.35) !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 0.9rem !important;
+}
+/* checkered flag accent after the title */
+.vsp-title::after,
+.vsel-title::after {
+  content: "";
+  width: 46px;
+  height: 26px;
+  background-image:
+    repeating-conic-gradient(rgba(255,255,255,0.85) 0% 25%, transparent 0% 50%);
+  background-size: 9px 9px;
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+  mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+
+/* ---------- Stat rows ---------- */
+.vsp-row {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.vsp-row:last-child { border-bottom: none; }
+.vsp-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.45));
+}
+.vsp-icon svg { width: 28px; height: 28px; display: block; }
+.vsp-body { flex: 1 1 auto; display: flex; flex-direction: column; gap: 7px; }
+.vsp-label {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  color: #fff !important;
+  letter-spacing: 0.01em;
+}
+.vsp-bar {
+  height: 14px !important;
+  background: rgba(0,0,0,0.4) !important;
+  border: none !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+.vsp-fill {
+  background: linear-gradient(#ffe14d, #FFC400) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0 6px rgba(255,214,0,0.5);
+}
+
+/* ---------- Vehicle option cards ---------- */
+.vehicle-select-panel .kart-thumbs {
+  flex: 1 1 auto !important;   /* fill the panel height */
+  gap: 14px !important;
+  justify-content: space-between !important;
+}
+.veh-option {
+  flex: 1 1 0 !important;       /* the 3 cards share the height equally */
+  gap: 14px !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 12px 16px !important;
+  background: #fdfdfd !important;
+  background-image: none !important;
+  border: 2px solid #1a1a1a !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.25) !important;
+  justify-content: flex-start;
+}
+.veh-option.active {
+  background: linear-gradient(#ffd83a, #ffc400) !important;
+}
+.veh-thumb { width: 72px !important; height: 54px !important; }
+.veh-name {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  text-transform: uppercase;
+  color: #1a1a1a !important;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Header GARAGE pill ---------- */
+.btn-garage-toggle {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 0.95rem !important;
+  color: var(--nintendo-red) !important;
+  background: #fff !important;
+  background-image: none !important;
+  border: 3px solid #1a1a1a !important;
+  border-radius: 999px !important;
+  padding: 10px 22px !important;
+  box-shadow: 0 4px 0 #1a1a1a !important;
+  text-transform: uppercase;
+}
+
+/* ---------- Rotate arrows ---------- */
+.yellow-arrow-btn {
+  width: 58px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
+  border: 3px solid #1a1a1a !important;
+  background: linear-gradient(#ffd83a, #ffc400) !important;
+  box-shadow: 0 4px 0 #1a1a1a !important;
+}
+
+/* ---------- Colour swatches ---------- */
+.inline-swatch {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 10px !important;
+  border: 3px solid #1a1a1a !important;
+  box-shadow: 0 3px 0 #1a1a1a !important;
+  background-clip: padding-box !important;  /* keep the fill inside the black border */
+  overflow: hidden;
+}
+.inline-swatch.active {
+  border-color: #1a1a1a !important;
+  transform: scale(1.06) !important;
+  /* even yellow ring perfectly around the button (no offset shadow) */
+  box-shadow: 0 0 0 4px #FFD500 !important;
+}
+
+/* ---------- Add to cart ---------- */
+.inline-add-btn {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 0.84rem !important;
+  color: #1a1a1a !important;
+  background: linear-gradient(#ffd83a, #ffc400) !important;
+  border: 3px solid #1a1a1a !important;
+  border-radius: 13px !important;
+  padding: 12px 28px !important;
+  box-shadow: 0 4px 0 #1a1a1a !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-width: 338px;
+  max-width: 90vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ---------- Test drive CTA ---------- */
+.test-drive-cta {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 0.84rem !important;
+  color: #06210b !important;
+  background: linear-gradient(#43e06a, #22bd48) !important;
+  border: 3px solid #1a1a1a !important;
+  border-radius: 13px !important;
+  padding: 12px 28px !important;
+  box-shadow: 0 4px 0 #1a1a1a !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-width: 338px;
+  max-width: 90vw;
+  justify-content: center;
+  animation: none !important;   /* statico, niente pulsazione */
+}
+.tdc-text { font-family: 'Outfit', sans-serif !important; }
+.tdc-arrow { animation: none !important; }   /* freccia statica */
+
+/* Mute/settings button bottom-left -> rounded yellow like the mockup gear */
+button[aria-label*="musica"] {
+  border-radius: 14px !important;
+  border: 3px solid #1a1a1a !important;
+  box-shadow: 0 4px 0 #1a1a1a !important;
+}
+
+/* ---------- Checkered flag behind the configurator background ---------- */
+.stage-layer::before {
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(71vw, 874px);
+  height: min(48vh, 460px);
+  background-image: repeating-conic-gradient(rgba(255,255,255,0.9) 0 25%, transparent 0 50%);
+  background-size: 55px 55px;
+  opacity: 0.12;
+  -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 85%);
+  mask-image: radial-gradient(closest-side, #000 45%, transparent 85%);
+  z-index: 0;
+  pointer-events: none;
+}

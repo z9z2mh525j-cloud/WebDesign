@@ -1564,3 +1564,194 @@
 
 /* keep content above confetti */
 .success-screen > *:not(.win-confetti) { position: relative; z-index: 1; }
+
+/* ============================================================
+   VEHICLE STATS PANEL — left of the kart in the configurator
+   ============================================================ */
+.vehicle-stats-panel {
+  position: absolute;
+  left: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  max-width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem 1.2rem;
+  background: rgba(20, 12, 12, 0.55);
+  border: 3px solid #1a1a1a;
+  box-shadow: 3px 3px 0 #1a1a1a;
+  z-index: 15;
+}
+.vsp-row { display: flex; flex-direction: column; gap: 6px; }
+.vsp-label {
+  font-family: var(--pixel-title, 'Press Start 2P'), sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
+}
+.vsp-bar {
+  width: 100%;
+  height: 14px;
+  background: rgba(0,0,0,0.45);
+  border: 2px solid #1a1a1a;
+  overflow: hidden;
+}
+.vsp-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(#ffe14d, #FFD500);
+  transition: width 0.35s ease;
+}
+
+/* On narrow screens drop the panel below the kart so it doesn't overlap */
+@media (max-width: 900px) {
+  .vehicle-stats-panel {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+}
+
+/* ============================================================
+   VEHICLE SELECT PANEL — right of the kart (choose vehicle)
+   ============================================================ */
+.vehicle-select-panel {
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  max-width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem;
+  background: rgba(20, 12, 12, 0.55);
+  border: 3px solid #1a1a1a;
+  box-shadow: 3px 3px 0 #1a1a1a;
+  z-index: 15;
+}
+.vsel-title {
+  margin: 0 0 0.2rem;
+  color: #fff;
+  font-family: var(--pixel-title, 'Press Start 2P'), sans-serif;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
+}
+.vehicle-select-panel .kart-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.veh-option {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px !important;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+.veh-thumb {
+  width: 46px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+.veh-name {
+  font-family: var(--pixel-title, 'Press Start 2P'), sans-serif !important;
+  font-size: 0.55rem !important;
+  color: #1a1a1a;
+  letter-spacing: 0.01em;
+}
+
+/* On narrow screens drop the panel below the kart so it doesn't overlap */
+@media (max-width: 900px) {
+  .vehicle-select-panel {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .vehicle-select-panel .kart-thumbs { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+}
+
+/* selected vehicle row highlighted yellow (initial state before any click) */
+.veh-option.active { background: #FFD500; }
+
+/* Title for the stats/performance panel (matches the vehicles panel title) */
+.vsp-title {
+  margin: 0 0 0.2rem;
+  color: #fff;
+  font-family: var(--pixel-title, 'Press Start 2P'), sans-serif;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
+}
+
+/* Make the two side panels the exact same size */
+.vehicle-stats-panel,
+.vehicle-select-panel {
+  width: 260px;
+  max-width: 30vw;
+  min-height: 300px;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+/* ============================================================
+   TEST DRIVE — primary call-to-action (centered under kart)
+   ============================================================ */
+.test-drive-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  padding: 14px 30px !important;
+  font-family: var(--pixel-title, 'Press Start 2P'), sans-serif !important;
+  font-size: 0.72rem !important;
+  color: #06210b !important;
+  background: linear-gradient(#4be06a, #24c04a) !important;
+  border: 3px solid #1a1a1a !important;
+  border-radius: 12px !important;
+  box-shadow: 0 5px 0 #1a1a1a, 0 0 0 0 rgba(46, 204, 64, 0.55) !important;
+  cursor: pointer;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.25);
+  animation: tdcPulse 1.8s ease-in-out infinite;
+}
+.test-drive-cta:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+}
+.test-drive-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1a1a1a !important;
+  animation: none;
+}
+.tdc-icon { font-size: 1rem; line-height: 1; }
+.tdc-arrow {
+  font-size: 1.2rem;
+  line-height: 1;
+  animation: tdcArrow 1s ease-in-out infinite;
+}
+
+@keyframes tdcPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 5px 0 #1a1a1a, 0 0 0 0 rgba(46, 204, 64, 0.5);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 5px 0 #1a1a1a, 0 0 22px 6px rgba(46, 204, 64, 0.45);
+  }
+}
+@keyframes tdcArrow {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
@@ -12,6 +12,12 @@ interface TestDriveProps {
 
 export function TestDrive({ kartColor, kartUrl = '/mariokartcar.glb', onExit, onLapComplete, onDiscountChange }: TestDriveProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showTutorial, setShowTutorial] = useState(true);
+  const tutBadge = {
+    flex: '0 0 auto', minWidth: 64, textAlign: 'center' as const, fontWeight: 900,
+    fontSize: '0.98rem', padding: '8px 10px', background: '#FFD500',
+    border: '2px solid #1a1a1a', borderRadius: 10, boxShadow: '0 3px 0 #1a1a1a',
+  };
 
   useEffect(() => {
     const container = containerRef.current!;
@@ -878,42 +884,63 @@ export function TestDrive({ kartColor, kartUrl = '/mariokartcar.glb', onExit, on
         ← CONFIGURATORE
       </button>
 
-      <div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl text-center text-white text-sm font-semibold"
-        style={{ background: 'rgba(0,0,0,0.45)', fontFamily: "'Outfit', sans-serif" }}
-      >
-        WASD guida 🏎️ — P imposta la partenza — T imposta il traguardo — completa un giro per aggiungere al carrello 🏁
-      </div>
-
-      {/* LAP PROGRESS BAR (left side) */}
-      <div
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none"
-        style={{ fontFamily: "'Outfit', sans-serif" }}
-      >
-        <span style={{ fontSize: 26 }}>🏁</span>
+      {/* SHORT TUTORIAL — shown when entering the test drive */}
+      {showTutorial && (
         <div
-          style={{
-            position: 'relative', width: 16, height: '42vh', maxHeight: 360,
-            background: 'rgba(0,0,0,0.4)', borderRadius: 999, overflow: 'hidden',
-            border: '2px solid rgba(255,255,255,0.85)',
-          }}
+          className="absolute inset-0 z-30 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.55)', fontFamily: "'Outfit', sans-serif" }}
+          onClick={() => setShowTutorial(false)}
         >
           <div
-            id="td-progress-fill"
+            onClick={(e) => e.stopPropagation()}
             style={{
-              position: 'absolute', bottom: 0, left: 0, width: '100%', height: '0%',
-              background: 'linear-gradient(to top, #2ecc40, #ffd500)',
-              transition: 'height 0.15s linear',
+              width: 'min(92vw, 430px)',
+              background: 'linear-gradient(#fff, #fdeecb)',
+              border: '4px solid #1a1a1a',
+              borderRadius: 22,
+              boxShadow: '0 10px 0 #1a1a1a',
+              padding: '22px 24px 24px',
+              textAlign: 'center',
+              color: '#1a1a1a',
             }}
-          ></div>
+          >
+            <div style={{ fontSize: 40, lineHeight: 1 }}>🏁</div>
+            <h2 style={{ fontWeight: 900, fontSize: '1.61rem', margin: '8px 0 4px', textTransform: 'uppercase' }}>
+              Come funziona
+            </h2>
+            <p style={{ fontWeight: 600, fontSize: '1.035rem', opacity: 0.8, margin: '0 0 16px' }}>
+              Fai un giro completo della pista per aggiungere il kart al garage!
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, textAlign: 'left', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={tutBadge}>W A S D</span>
+                <span style={{ fontWeight: 700, fontSize: '1.035rem' }}>Guida il kart (oppure le frecce)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={tutBadge}>🏁</span>
+                <span style={{ fontWeight: 700, fontSize: '1.035rem' }}>Parti e torna al traguardo per completare il giro</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={tutBadge}>🎁</span>
+                <span style={{ fontWeight: 700, fontSize: '1.035rem' }}>Prendi le casse per uno sconto sul prezzo</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowTutorial(false)}
+              style={{
+                fontWeight: 900, fontSize: '1.15rem', textTransform: 'uppercase', letterSpacing: '0.03em',
+                color: '#06210b', background: 'linear-gradient(#43e06a, #22bd48)',
+                border: '3px solid #1a1a1a', borderRadius: 14, padding: '12px 30px',
+                boxShadow: '0 4px 0 #1a1a1a', cursor: 'pointer',
+              }}
+            >
+              VIA! 🏎️
+            </button>
+          </div>
         </div>
-        <div
-          className="px-2 py-1 rounded-lg text-white text-xs font-bold text-center"
-          style={{ background: 'rgba(0,0,0,0.5)' }}
-        >
-          Manca<br /><span id="td-progress-pct">100%</span>
-        </div>
-      </div>
+      )}
 
       <div
         id="testdrive-saved"
