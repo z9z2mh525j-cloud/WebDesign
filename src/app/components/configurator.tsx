@@ -595,6 +595,27 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
       };
       updateVehicleStats('/mariokartcar.glb'); // initial (Standard is selected)
 
+      // Scarcity per vehicle: a number = "solo N pezzi rimasti"; null = no
+      // scarcity shown (widely available).
+      const KART_SCARCITY: Record<string, number | null> = {
+        '/mariokartcar.glb': null, // Standard: sempre disponibile
+        '/eggstandard.glb':  5,    // Egg Standard: 5 pezzi
+        '/fulmine.glb':      2,    // Fulmine: rarissimo, 2 pezzi
+      };
+      const updateScarcity = (url: string) => {
+        const box = document.getElementById('pp-scarcity');
+        const stockEl = document.getElementById('pp-stock');
+        if (!box) return;
+        const n = KART_SCARCITY[url];
+        if (n == null) {
+          box.style.display = 'none';
+        } else {
+          box.style.display = 'inline-flex';
+          if (stockEl) stockEl.textContent = String(n);
+        }
+      };
+      updateScarcity('/mariokartcar.glb'); // initial
+
       document.querySelectorAll('.kart-thumb-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const url = (btn as HTMLElement).dataset.kart;
@@ -609,6 +630,7 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           (btn as HTMLElement).style.background = '#FFD500';
           glbSpinnerRef.current.loadModel(url);
           updateVehicleStats(url);
+          updateScarcity(url);
         });
       });
 
@@ -1201,6 +1223,12 @@ export function Configurator({ onBackToMenu, onTestDrive, autoAddToCart, onAutoA
           ></button>
           <button className="inline-swatch" data-hex="#3498DB" data-color-hue="220" style={{ background: '#3498DB' }} title="Blu"></button>
           <button className="inline-swatch" data-hex="#9B59B6" data-color-hue="280" style={{ background: '#9B59B6' }} title="Viola"></button>
+        </div>
+
+        {/* SCARCITY (per-vehicle, updated on selection) */}
+        <div className="pp-scarcity" id="pp-scarcity">
+          <span className="pp-dot"></span>
+          EDIZIONE LIMITATA — SOLO <strong id="pp-stock">3</strong> PEZZI RIMASTI
         </div>
 
         {/* TEST DRIVE — first button */}
